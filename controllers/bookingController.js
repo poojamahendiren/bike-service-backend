@@ -105,37 +105,35 @@ const markBookingAsCompleted = async (req, res) => {
   }
 };
 
-// // Function to send email notification using nodemailer
-// const sendMail = async (toEmail, subject, htmlContent) => {
-//   // Configure your nodemailer transporter here
-//   const transporter = nodemailer.createTransport({
-//     // Specify your email service provider and authentication details
-//     // For example, if using Gmail:
-//     service: 'gmail',
-//     auth: {
-//       user: 'your-email@gmail.com',
-//       pass: 'your-email-password',
-//     },
-//   });
 
-//   const mailOptions = {
-//     from: 'your-email@gmail.com', // Sender's email address
-//     to: toEmail, // Recipient's email address
-//     subject: subject, // Email subject
-//     html: htmlContent, // Email content as HTML
-//   };
+const updateBooking = async (req, res) => {
+  const { id } = req.params; // Get the booking ID from the URL parameter
+  const updates = req.body; // Get the updated booking data from the request body
 
-//   // Send the email
-//   try {
-//     await transporter.sendMail(mailOptions);
-//   } catch (error) {
-//     console.error('Error sending email:', error);
-//   }
-// };
+  try {
+    // Find the booking by ID and update it with the new data
+    const updatedBooking = await Booking.findByIdAndUpdate(id, updates, {
+      new: true, // Return the updated booking in the response
+      runValidators: true, // Run validation on the updated data
+    });
+
+    if (!updatedBooking) {
+      // If the booking with the provided ID is not found, return an error
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    // If the booking is updated successfully, return the updated booking data in the response
+    res.json(updatedBooking);
+  } catch (error) {
+    // If there's an error during the update process, return an error response
+    res.status(400).json({ error: 'Error updating booking' });
+  }
+};
 
 module.exports = {
   createBooking,
   getAllBookings,
   markBookingAsReady,
   markBookingAsCompleted,
+  updateBooking
 };
