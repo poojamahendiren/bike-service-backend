@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 app.use('/auth', authRoutes);
 
 //authentication
-app.use("/",  (req,res,next) => {
+app.use("/api",  (req,res,next) => {
     const token = req.headers.accesstoken
     if(!token){
       return res.status(400).send({msessage:"Token not found"})
